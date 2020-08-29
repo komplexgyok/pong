@@ -26,3 +26,7 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(${LIBRARIES_DIR}/glfw EXCLUDE_FROM_ALL)
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+
+# Glad
+add_subdirectory(${LIBRARIES_DIR}/glad)
+target_link_libraries(${PROJECT_NAME} PRIVATE glad)
