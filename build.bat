@@ -1,3 +1,4 @@
+mkdir build 2> NUL
 g++ source/* libraries/glad/src/glad.c^
  -I"libraries/glad/include"^
  -I"libraries-win/glfw/include" -L"libraries-win/glfw/lib"^
