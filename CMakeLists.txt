@@ -15,6 +15,7 @@ set(LIBRARIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libraries)
 set(SOURCE
     ${SOURCE_DIR}/Game.cpp
     ${SOURCE_DIR}/main.cpp
+    ${SOURCE_DIR}/Shader.cpp
     ${SOURCE_DIR}/Window.cpp
 )
 
