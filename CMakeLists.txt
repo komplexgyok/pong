@@ -16,6 +16,7 @@ set(SOURCE
     ${SOURCE_DIR}/Game.cpp
     ${SOURCE_DIR}/main.cpp
     ${SOURCE_DIR}/Shader.cpp
+    ${SOURCE_DIR}/VertexBuffer.cpp
     ${SOURCE_DIR}/Window.cpp
 )
 
