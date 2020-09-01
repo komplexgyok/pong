@@ -8,8 +8,8 @@ Game::Game(const std::string &title, int width, int height)
 	: window_ {new Window(title, width, height)}
 	, shader_ {new Shader("../resources/shaders/pong.glsl")}
 	, vertexBuffer_ {nullptr}
+	, indexBuffer_ {nullptr}
 	, VAO_ {0}
-	, EBO_ {0}
 {
 	// Vertex data
 	float vertices[] = {
@@ -26,15 +26,12 @@ Game::Game(const std::string &title, int width, int height)
 	};
 
 	glGenVertexArrays(1, &VAO_);
-	glGenBuffers(1, &EBO_);
 	// Bind the vertex array object
 	glBindVertexArray(VAO_);
-	// Copy the vertex data into the vertex buffer
+
 	vertexBuffer_ = new VertexBuffer(vertices, sizeof(vertices));
-	// Bind the element buffer
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
-	// Copy the index data into the buffer's memory
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	indexBuffer_  = new IndexBuffer(indices, 6);
+
 	// Configure vertex attributes
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 	glEnableVertexAttribArray(0);
