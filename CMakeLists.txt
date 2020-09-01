@@ -15,7 +15,10 @@ set(LIBRARIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libraries)
 set(SOURCE
     ${SOURCE_DIR}/Game.cpp
     ${SOURCE_DIR}/IndexBuffer.cpp
+    ${SOURCE_DIR}/IntroState.cpp
     ${SOURCE_DIR}/main.cpp
+    ${SOURCE_DIR}/MenuState.cpp
+    ${SOURCE_DIR}/PlayState.cpp
     ${SOURCE_DIR}/Shader.cpp
     ${SOURCE_DIR}/VertexArray.cpp
     ${SOURCE_DIR}/VertexBuffer.cpp
