@@ -2,7 +2,7 @@
 
 #include "IndexBuffer.h"
 #include "Shader.h"
-#include "VertexBuffer.h"
+#include "VertexArray.h"
 #include "Window.h"
 
 // Representation of the game
@@ -16,9 +16,8 @@ public:
 	void run();
 
 private:
-	Window *window_;               // Game window object
-	Shader *shader_;               // Shader object
-	VertexBuffer *vertexBuffer_;   // Vertex buffer object
-	IndexBuffer *indexBuffer_;     // Index buffer object
-	unsigned int VAO_;             // Vertex array object
+	Window *window_;             // Game window object
+	Shader *shader_;             // Shader object
+	VertexArray *vertexArray_;   // Vertex array object
+	IndexBuffer *indexBuffer_;   // Index buffer object
 };

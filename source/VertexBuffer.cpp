@@ -4,17 +4,22 @@
 /***********************************************************************************************************************
  * Constructor.
  *
- * @param float *vertices     Vertex data.
- * @param unsigned int size   Size of the vertex data in bytes.
+ * @param float *data                   Vertex data.
+ * @param unsigned int count            Total number of components in the data.
+ * @param unsigned int componentCount   Number of components in a single data chunk.
  **********************************************************************************************************************/
-VertexBuffer::VertexBuffer(float *vertices, unsigned int size)
+VertexBuffer::VertexBuffer(float *data, unsigned int count, unsigned int componentCount)
 	: id_ {0}
+	, componentCount_ {componentCount}
 {
+	// Generate the vertex buffer
 	glGenBuffers(1, &id_);
 	// Bind the vertex buffer
-	glBindBuffer(GL_ARRAY_BUFFER, id_);
+	bind();
 	// Copy the vertex data into the buffer's memory
-	glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), data, GL_STATIC_DRAW);
+	// Unbind the vertex buffer
+	unbind();
 }
 
 /***********************************************************************************************************************

@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include "Game.h"
+#include "VertexBuffer.h"
 
 /***********************************************************************************************************************
  * Constructor.
@@ -7,9 +8,8 @@
 Game::Game(const std::string &title, int width, int height)
 	: window_ {new Window(title, width, height)}
 	, shader_ {new Shader("../resources/shaders/pong.glsl")}
-	, vertexBuffer_ {nullptr}
+	, vertexArray_ {new VertexArray()}
 	, indexBuffer_ {nullptr}
-	, VAO_ {0}
 {
 	// Vertex data
 	float vertices[] = {
@@ -25,16 +25,9 @@ Game::Game(const std::string &title, int width, int height)
 		1, 2, 3    // Second triangle
 	};
 
-	glGenVertexArrays(1, &VAO_);
-	// Bind the vertex array object
-	glBindVertexArray(VAO_);
+	vertexArray_->addBuffer(new VertexBuffer(vertices, 4 * 3, 3), 0);
 
-	vertexBuffer_ = new VertexBuffer(vertices, sizeof(vertices));
-	indexBuffer_  = new IndexBuffer(indices, 6);
-
-	// Configure vertex attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-	glEnableVertexAttribArray(0);
+	indexBuffer_ = new IndexBuffer(indices, 6);
 }
 
 /***********************************************************************************************************************
@@ -42,6 +35,9 @@ Game::Game(const std::string &title, int width, int height)
  **********************************************************************************************************************/
 Game::~Game()
 {
+	delete indexBuffer_;
+	delete vertexArray_;
+	delete shader_;
 	delete window_;
 }
 
@@ -61,8 +57,11 @@ void Game::run()
 
 		// Draw the triangles
 		shader_->use();
-		glBindVertexArray(VAO_);
+		vertexArray_->bind();
+		indexBuffer_->bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		indexBuffer_->unbind();
+		vertexArray_->unbind();
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window_->getNativeWindow());

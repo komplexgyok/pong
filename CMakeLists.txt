@@ -17,6 +17,7 @@ set(SOURCE
     ${SOURCE_DIR}/IndexBuffer.cpp
     ${SOURCE_DIR}/main.cpp
     ${SOURCE_DIR}/Shader.cpp
+    ${SOURCE_DIR}/VertexArray.cpp
     ${SOURCE_DIR}/VertexBuffer.cpp
     ${SOURCE_DIR}/Window.cpp
 )
