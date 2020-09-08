@@ -1,28 +1,16 @@
-#include <glad/glad.h>
 #include "IndexBuffer.h"
 
 /***********************************************************************************************************************
- * Constructor.
- *
- * @param unsigned int *data   Index data.
- * @param unsigned int count   Number of indices.
+ * Constructor. Generates an OpenGL buffer object.
  **********************************************************************************************************************/
-IndexBuffer::IndexBuffer(unsigned int *data, unsigned int count)
+IndexBuffer::IndexBuffer()
 	: id_ {0}
-	, count_ {count}
 {
-	// Generate the index buffer
 	glGenBuffers(1, &id_);
-	// Bind the index buffer
-	bind();
-	// Copy the index data into the buffer's memory
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW);
-	// Unbind the index buffer
-	unbind();
 }
 
 /***********************************************************************************************************************
- * Destructor.
+ * Destructor. Deletes an OpenGL buffer object.
  **********************************************************************************************************************/
 IndexBuffer::~IndexBuffer()
 {
@@ -30,7 +18,23 @@ IndexBuffer::~IndexBuffer()
 }
 
 /***********************************************************************************************************************
- * Binds the current index buffer.
+ * Copies the index data into the buffer's memory.
+ *
+ * @param unsigned int *data   Index data.
+ * @param unsigned int size    Size of the index data in bytes.
+ *
+ * @return void
+ **********************************************************************************************************************/
+void IndexBuffer::copy(unsigned int *data, unsigned int size) const
+{
+	bind();
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+}
+
+/***********************************************************************************************************************
+ * Binds the buffer to the GL_ELEMENT_ARRAY_BUFFER target, making it an index buffer.
+ *
+ * @return void
  **********************************************************************************************************************/
 void IndexBuffer::bind() const
 {
@@ -38,7 +42,9 @@ void IndexBuffer::bind() const
 }
 
 /***********************************************************************************************************************
- * Unbinds the current index buffer.
+ * Unbinds the currently bound index buffer.
+ *
+ * @return void
  **********************************************************************************************************************/
 void IndexBuffer::unbind() const
 {
