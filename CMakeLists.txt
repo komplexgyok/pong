@@ -37,5 +37,9 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 
 # Glad
-add_subdirectory(${LIBRARIES_DIR}/glad)
+add_subdirectory(${LIBRARIES_DIR}/glad EXCLUDE_FROM_ALL)
 target_link_libraries(${PROJECT_NAME} PRIVATE glad)
+
+# Glm
+add_subdirectory(${LIBRARIES_DIR}/glm EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} PRIVATE glm)
