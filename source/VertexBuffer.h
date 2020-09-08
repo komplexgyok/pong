@@ -1,20 +1,23 @@
 #pragma once
 
-// Representation of az OpenGL vertex buffer
+#include <glad/glad.h>
+
+/***********************************************************************************************************************
+ * VertexBuffer class.
+ *
+ * Representation of an OpenGL vertex buffer. It is responsible for copying the vertex data into the GPU's memory. Once
+ * the data is in the GPU's memory the vertex shader has almost instant access to the vertices.
+ **********************************************************************************************************************/
 class VertexBuffer
 {
 public:
-	// Constructor and destructor
-	VertexBuffer(float *data, unsigned int count, unsigned int componentCount);
+	VertexBuffer();
 	~VertexBuffer();
 
-	// Getter
-	[[nodiscard]] inline unsigned int getComponentCount() const { return componentCount_; }
-
+	void copy(float *data, unsigned int size) const;
 	void bind() const;
 	void unbind() const;
 
 private:
-	unsigned int id_;               // OpenGL vertex buffer object ID
-	unsigned int componentCount_;   // Number of components in a single data chunk
+	unsigned int id_;   // OpenGL vertex buffer object ID
 };

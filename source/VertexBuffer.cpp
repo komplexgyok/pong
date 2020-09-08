@@ -1,29 +1,16 @@
-#include <glad/glad.h>
 #include "VertexBuffer.h"
 
 /***********************************************************************************************************************
- * Constructor.
- *
- * @param float *data                   Vertex data.
- * @param unsigned int count            Total number of components in the data.
- * @param unsigned int componentCount   Number of components in a single data chunk.
+ * Constructor. Generates an OpenGL buffer object.
  **********************************************************************************************************************/
-VertexBuffer::VertexBuffer(float *data, unsigned int count, unsigned int componentCount)
+VertexBuffer::VertexBuffer()
 	: id_ {0}
-	, componentCount_ {componentCount}
 {
-	// Generate the vertex buffer
 	glGenBuffers(1, &id_);
-	// Bind the vertex buffer
-	bind();
-	// Copy the vertex data into the buffer's memory
-	glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), data, GL_STATIC_DRAW);
-	// Unbind the vertex buffer
-	unbind();
 }
 
 /***********************************************************************************************************************
- * Destructor.
+ * Destructor. Deletes an OpenGL buffer object.
  **********************************************************************************************************************/
 VertexBuffer::~VertexBuffer()
 {
@@ -31,7 +18,23 @@ VertexBuffer::~VertexBuffer()
 }
 
 /***********************************************************************************************************************
- * Binds the current vertex buffer.
+ * Copies the vertex data into the buffer's memory.
+ *
+ * @param float *data         Vertex data.
+ * @param unsigned int size   Size of the vertex data in bytes.
+ *
+ * @return void
+ **********************************************************************************************************************/
+void VertexBuffer::copy(float *data, unsigned int size) const
+{
+	bind();
+	glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+}
+
+/***********************************************************************************************************************
+ * Binds the buffer to the GL_ARRAY_BUFFER target, making it a vertex buffer.
+ *
+ * @return void
  **********************************************************************************************************************/
 void VertexBuffer::bind() const
 {
@@ -39,7 +42,9 @@ void VertexBuffer::bind() const
 }
 
 /***********************************************************************************************************************
- * Unbinds the current vertex buffer.
+ * Unbinds the currently bound vertex buffer.
+ *
+ * @return void
  **********************************************************************************************************************/
 void VertexBuffer::unbind() const
 {
