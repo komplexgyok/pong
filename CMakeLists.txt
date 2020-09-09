@@ -13,6 +13,7 @@ set(LIBRARIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libraries)
 
 # List of source files to compile
 set(SOURCE
+    ${SOURCE_DIR}/Ball.cpp
     ${SOURCE_DIR}/Entity.cpp
     ${SOURCE_DIR}/Game.cpp
     ${SOURCE_DIR}/IndexBuffer.cpp

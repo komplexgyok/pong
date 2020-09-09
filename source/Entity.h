@@ -28,6 +28,9 @@ public:
 	void setPositionX(float positionX) { position_.x = positionX; }
 	void setPositionY(float positionY) { position_.y = positionY; }
 
+	void setVelocityX(float velocityX) { velocity_.x = velocityX; }
+	void setVelocityY(float velocityY) { velocity_.y = velocityY; }
+
 	virtual void draw(Renderer *renderer);
 
 private:

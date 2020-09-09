@@ -9,6 +9,7 @@ PlayState::PlayState(Game *game)
 	: game_ {game}
 	, paddle1_ {nullptr}
 	, paddle2_ {nullptr}
+	, ball_ {nullptr}
 {
 	// Set GLFW callback functions
 	glfwSetWindowUserPointer(game_->getWindow()->getNativeWindow(), this);
@@ -29,6 +30,14 @@ PlayState::PlayState(Game *game)
 		glm::vec2(static_cast<float>(game_->getWindow()->getWidth()) - 60.0f, static_cast<float>(game_->getWindow()->getHeight()) / 2.0f - 80.0f),
 		glm::vec2(40.0f, 160.0f)
 	);
+
+	// Init the ball
+	ball_ = new Ball(
+		glm::vec2(200.0f, 200.0f),
+		glm::vec2(30.0f, 30.0f),
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+		glm::vec2(100.0f, 350.0f)
+	);
 }
 
 /***********************************************************************************************************************
@@ -38,6 +47,7 @@ PlayState::~PlayState()
 {
 	delete paddle1_;
 	delete paddle2_;
+	delete ball_;
 }
 
 void PlayState::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -102,7 +112,10 @@ void PlayState::input(float deltaTime)
 }
 
 void PlayState::update(float deltaTime)
-{}
+{
+	// Move the ball
+	ball_->move(deltaTime, game_->getWindow()->getWidth(), game_->getWindow()->getHeight());
+}
 
 void PlayState::render()
 {
@@ -124,16 +137,10 @@ void PlayState::render()
 
 	// Paddle1
 	paddle1_->draw(game_->getRenderer());
-
 	// Paddle2
 	paddle2_->draw(game_->getRenderer());
-
 	// Ball
-	game_->getRenderer()->drawSprite(
-		glm::vec2(200.0f, 200.0f),
-		glm::vec2(40.0f, 40.0f),
-		glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
-	);
+	ball_->draw(game_->getRenderer());
 
 	// Swap front and back buffers
 	glfwSwapBuffers(game_->getWindow()->getNativeWindow());
