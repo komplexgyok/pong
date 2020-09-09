@@ -1,7 +1,10 @@
 #pragma once
 
+#include <glad/glad.h>
+#include <glm/glm.hpp>
 #include "Game.h"
 #include "GameState.h"
+#include "MenuState.h"
 
 // The gameplay state of the game
 class PlayState : public GameState

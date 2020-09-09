@@ -36,6 +36,32 @@ void Shader::use() const
 }
 
 /***********************************************************************************************************************
+ * Sets a 4D vector uniform inside the shader.
+ *
+ * @param const std::string &name   Name of the uniform to set.
+ * @param const glm::mat4 &vector   Value.
+ *
+ * @return void
+ **********************************************************************************************************************/
+void Shader::setVector4(const std::string &name, const glm::vec4 &vector) const
+{
+	glUniform4fv(glGetUniformLocation(id_, name.c_str()), 1, glm::value_ptr(vector));
+}
+
+/***********************************************************************************************************************
+ * Sets a 4D matrix uniform inside the shader.
+ *
+ * @param const std::string &name   Name of the uniform to set.
+ * @param const glm::mat4 &matrix   Value.
+ *
+ * @return void
+ **********************************************************************************************************************/
+void Shader::setMatrix4(const std::string &name, const glm::mat4 &matrix) const
+{
+	glUniformMatrix4fv(glGetUniformLocation(id_, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+/***********************************************************************************************************************
  * Reads the given file's content into a string.
  *
  * @param const std::string &filepath   Path of the file to read in.

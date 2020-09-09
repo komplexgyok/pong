@@ -6,6 +6,7 @@
  **********************************************************************************************************************/
 Game::Game(const std::string &title, int width, int height)
 	: window_ {new Window(title, width, height)}
+	, renderer_ {new Renderer(width, height)}
 {
 	pushState(new IntroState(this));
 }
@@ -42,13 +43,27 @@ void Game::popState()
  **********************************************************************************************************************/
 void Game::run()
 {
+	double lastFrame          = glfwGetTime();
+	unsigned int frameCounter = 0;
+
 	// Loop until the user closes the window
 	while(!glfwWindowShouldClose(window_->getNativeWindow())) {
+		double currentFrame = glfwGetTime();
+
 		// Process input
 		states_.top()->input();
 		// Update
 		states_.top()->update();
 		// Render
 		states_.top()->render();
+
+		// FPS counter
+		frameCounter++;
+
+		if (currentFrame - lastFrame >= 1.0) {
+			std::cout << frameCounter << " FPS" << std::endl;
+			frameCounter = 0;
+			lastFrame += 1.0;
+		}
 	}
 }

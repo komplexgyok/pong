@@ -11,11 +11,13 @@ public:
 	Window(const std::string &title, int width, int height);
 	~Window();
 
-	// Getter
+	// Getters
 	[[nodiscard]] inline GLFWwindow *getNativeWindow() const { return window_; }
+	[[nodiscard]] inline int getWidth() const { return width_; }
+	[[nodiscard]] inline int getHeight() const { return height_; }
 
 private:
 	GLFWwindow *window_;   // Native window object
-	int width_;            // Width of the window in pixels, TODO: Do I need to store this?
-	int height_;           // Height of the window in pixels, TODO: Do I need to store this?
+	int width_;            // Width of the window in pixels
+	int height_;           // Height of the window in pixels
 };

@@ -19,6 +19,7 @@ set(SOURCE
     ${SOURCE_DIR}/main.cpp
     ${SOURCE_DIR}/MenuState.cpp
     ${SOURCE_DIR}/PlayState.cpp
+    ${SOURCE_DIR}/Renderer.cpp
     ${SOURCE_DIR}/Shader.cpp
     ${SOURCE_DIR}/VertexArray.cpp
     ${SOURCE_DIR}/VertexBuffer.cpp

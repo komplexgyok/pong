@@ -1,5 +1,3 @@
-#include <glad/glad.h>
-#include "MenuState.h"
 #include "PlayState.h"
 
 /***********************************************************************************************************************
@@ -69,10 +67,41 @@ void PlayState::update()
 void PlayState::render()
 {
 	// Background color
-	glClearColor(0.0, 0.0, 1.0, 1.0);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// Actual rendering
+	static float netY = 0.0f;
+
+	// Net
+	while (netY <= static_cast<float>(game_->getWindow()->getHeight())) {
+		game_->getRenderer()->drawSprite(
+			glm::vec2(static_cast<float>(game_->getWindow()->getWidth()) / 2.0f - 5.0f, netY),
+			glm::vec2(10.0f, 40.0f)
+		);
+		netY += 60.0f;
+	}
+	netY = 0.0f;
+
+	// Paddle1
+	game_->getRenderer()->drawSprite(
+		glm::vec2(20.0f, static_cast<float>(game_->getWindow()->getHeight()) / 2.0f - 80.0f),
+		glm::vec2(40.0f, 160.0f),
+		glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)
+	);
+
+	// Paddle2
+	game_->getRenderer()->drawSprite(
+		glm::vec2(static_cast<float>(game_->getWindow()->getWidth()) - 60.0f, static_cast<float>(game_->getWindow()->getHeight()) / 2.0f - 80.0f),
+		glm::vec2(40.0f, 160.0f),
+		glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)
+	);
+
+	// Ball
+	game_->getRenderer()->drawSprite(
+		glm::vec2(200.0f, 200.0f),
+		glm::vec2(40.0f, 40.0f),
+		glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
+	);
 
 	// Swap front and back buffers
 	glfwSwapBuffers(game_->getWindow()->getNativeWindow());

@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <vector>
 
@@ -18,6 +20,10 @@ public:
 	~Shader();
 
 	void use() const;
+
+	// Uniform setters
+	void setVector4(const std::string &name, const glm::vec4 &vector) const;
+	void setMatrix4(const std::string &name, const glm::mat4 &matrix) const;
 
 private:
 	static std::string readFile_(const std::string &filePath);

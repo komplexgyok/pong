@@ -1,7 +1,9 @@
 #pragma once
 
+#include <iostream>
 #include <stack>
 #include "GameState.h"
+#include "Renderer.h"
 #include "Window.h"
 
 // Representation of the game
@@ -12,8 +14,9 @@ public:
 	Game(const std::string &title, int width, int height);
 	~Game();
 
-	// Getter
+	// Getters
 	[[nodiscard]] Window *getWindow() const { return window_; }
+	[[nodiscard]] Renderer *getRenderer() const { return renderer_; }
 
 	// State machine
 	void pushState(GameState *state);
@@ -25,4 +28,5 @@ public:
 private:
 	Window *window_;                  // Game window object
 	std::stack<GameState*> states_;   // Stack of game states
+	Renderer *renderer_;              // Renderer object
 };
