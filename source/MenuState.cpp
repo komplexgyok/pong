@@ -63,10 +63,10 @@ void MenuState::inputMouseButtonCallback(int button, int action)
 void MenuState::inputCursorPositionCallback(double positionX, double positionY)
 {}
 
-void MenuState::input()
+void MenuState::input(float deltaTime)
 {}
 
-void MenuState::update()
+void MenuState::update(float deltaTime)
 {}
 
 void MenuState::render()

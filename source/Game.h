@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <stack>
 #include "GameState.h"
 #include "Renderer.h"
@@ -15,8 +14,12 @@ public:
 	~Game();
 
 	// Getters
-	[[nodiscard]] Window *getWindow() const { return window_; }
-	[[nodiscard]] Renderer *getRenderer() const { return renderer_; }
+	[[nodiscard]] inline Window *getWindow() const { return window_; }
+	[[nodiscard]] inline Renderer *getRenderer() const { return renderer_; }
+	[[nodiscard]] inline bool getKey(unsigned int index) const { return keys_[index]; }
+
+	// Setter
+	void setKey(unsigned int index, bool isPressed) { keys_[index] = isPressed; }
 
 	// State machine
 	void pushState(GameState *state);
@@ -29,4 +32,5 @@ private:
 	Window *window_;                  // Game window object
 	std::stack<GameState*> states_;   // Stack of game states
 	Renderer *renderer_;              // Renderer object
+	bool keys_[1024];                 // Stores if the keys are pressed or not
 };

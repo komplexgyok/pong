@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include "Entity.h"
 #include "Game.h"
 #include "GameState.h"
 #include "MenuState.h"
@@ -24,10 +25,12 @@ public:
 	void inputCursorPositionCallback(double positionX, double positionY) override;
 
 	// Main game loop methods
-	void input() override;
-	void update() override;
+	void input(float deltaTime) override;
+	void update(float deltaTime) override;
 	void render() override;
 
 private:
-	Game *game_;   // Game instance
+	Game *game_;        // Game instance
+	Entity *paddle1_;   // Player 1's paddle
+	Entity *paddle2_;   // Player 2's paddle
 };

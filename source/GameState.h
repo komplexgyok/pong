@@ -13,7 +13,7 @@ public:
 	virtual void inputCursorPositionCallback(double positionX, double positionY) = 0;
 
 	// Main game loop methods
-	virtual void input() = 0;
-	virtual void update() = 0;
+	virtual void input(float deltaTime) = 0;
+	virtual void update(float deltaTime) = 0;
 	virtual void render() = 0;
 };

@@ -61,10 +61,10 @@ void IntroState::inputMouseButtonCallback(int button, int action)
 void IntroState::inputCursorPositionCallback(double positionX, double positionY)
 {}
 
-void IntroState::input()
+void IntroState::input(float deltaTime)
 {}
 
-void IntroState::update()
+void IntroState::update(float deltaTime)
 {}
 
 void IntroState::render()

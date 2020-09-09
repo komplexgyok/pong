@@ -21,8 +21,8 @@ public:
 	void inputCursorPositionCallback(double positionX, double positionY) override;
 
 	// Main game loop methods
-	void input() override;
-	void update() override;
+	void input(float deltaTime) override;
+	void update(float deltaTime) override;
 	void render() override;
 
 private:

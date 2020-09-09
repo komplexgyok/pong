@@ -7,19 +7,38 @@
  **********************************************************************************************************************/
 PlayState::PlayState(Game *game)
 	: game_ {game}
+	, paddle1_ {nullptr}
+	, paddle2_ {nullptr}
 {
 	// Set GLFW callback functions
 	glfwSetWindowUserPointer(game_->getWindow()->getNativeWindow(), this);
 	glfwSetKeyCallback(game_->getWindow()->getNativeWindow(), keyCallback);
 	glfwSetMouseButtonCallback(game_->getWindow()->getNativeWindow(), mouseButtonCallback);
 	glfwSetCursorPosCallback(game_->getWindow()->getNativeWindow(), cursorPositionCallback);
+
+	// Init player 1's paddle
+	paddle1_ = new Entity(
+		glm::vec2(20.0f, static_cast<float>(game_->getWindow()->getHeight()) / 2.0f - 80.0f),
+		glm::vec2(40.0f, 160.0f),
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+		glm::vec2(0.0f, 500.0f)
+	);
+
+	// Init player 2's paddle
+	paddle2_ = new Entity(
+		glm::vec2(static_cast<float>(game_->getWindow()->getWidth()) - 60.0f, static_cast<float>(game_->getWindow()->getHeight()) / 2.0f - 80.0f),
+		glm::vec2(40.0f, 160.0f)
+	);
 }
 
 /***********************************************************************************************************************
  * Destructor.
  **********************************************************************************************************************/
 PlayState::~PlayState()
-{}
+{
+	delete paddle1_;
+	delete paddle2_;
+}
 
 void PlayState::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
@@ -41,13 +60,12 @@ void PlayState::cursorPositionCallback(GLFWwindow *window, double positionX, dou
 
 void PlayState::inputKeyCallback(int key, int action)
 {
-	if (action == GLFW_PRESS) {
-		switch (key) {
-			case GLFW_KEY_ESCAPE:
-				game_->pushState(new MenuState(game_));
-				break;
-			default:
-				break;
+	if (key >= 0 && key < 1024) {
+		if (action == GLFW_PRESS) {
+			game_->setKey(key, true);
+		}
+		else if (action == GLFW_RELEASE) {
+			game_->setKey(key, false);
 		}
 	}
 }
@@ -58,10 +76,32 @@ void PlayState::inputMouseButtonCallback(int button, int action)
 void PlayState::inputCursorPositionCallback(double positionX, double positionY)
 {}
 
-void PlayState::input()
-{}
+void PlayState::input(float deltaTime)
+{
+	// Poll for I/O events (keyboard, mouse, etc.)
+	glfwPollEvents();
 
-void PlayState::update()
+	// Go back to the main menu
+	if (game_->getKey(GLFW_KEY_ESCAPE)) {
+		game_->pushState(new MenuState(game_));
+	}
+
+	// Move up
+	if (game_->getKey(GLFW_KEY_W)) {
+		if (paddle1_->getPosition().y >= 0.0f) {
+			paddle1_->setPositionY(paddle1_->getPosition().y - paddle1_->getVelocity().y * deltaTime);
+		}
+	}
+
+	// Move down
+	if (game_->getKey(GLFW_KEY_S)) {
+		if (paddle1_->getPosition().y <= static_cast<float>(game_->getWindow()->getHeight()) - paddle1_->getSize().y) {
+			paddle1_->setPositionY(paddle1_->getPosition().y + paddle1_->getVelocity().y * deltaTime);
+		}
+	}
+}
+
+void PlayState::update(float deltaTime)
 {}
 
 void PlayState::render()
@@ -83,18 +123,10 @@ void PlayState::render()
 	netY = 0.0f;
 
 	// Paddle1
-	game_->getRenderer()->drawSprite(
-		glm::vec2(20.0f, static_cast<float>(game_->getWindow()->getHeight()) / 2.0f - 80.0f),
-		glm::vec2(40.0f, 160.0f),
-		glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)
-	);
+	paddle1_->draw(game_->getRenderer());
 
 	// Paddle2
-	game_->getRenderer()->drawSprite(
-		glm::vec2(static_cast<float>(game_->getWindow()->getWidth()) - 60.0f, static_cast<float>(game_->getWindow()->getHeight()) / 2.0f - 80.0f),
-		glm::vec2(40.0f, 160.0f),
-		glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)
-	);
+	paddle2_->draw(game_->getRenderer());
 
 	// Ball
 	game_->getRenderer()->drawSprite(
@@ -105,6 +137,4 @@ void PlayState::render()
 
 	// Swap front and back buffers
 	glfwSwapBuffers(game_->getWindow()->getNativeWindow());
-	// Poll for I/O events (keyboard, mouse, etc.)
-	glfwPollEvents();
 }
