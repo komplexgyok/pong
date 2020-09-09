@@ -1,30 +1,27 @@
 #pragma once
 
-#include <array>
+#include <fstream>
+#include <glad/glad.h>
 #include <string>
-#include <unordered_map>
+#include <vector>
 
-// Possible shader types
-enum class ShaderType
-{
-	NONE = -1, VERTEX = 0, FRAGMENT = 1
-};
-
-// Representation of an OpenGL shader
+/***********************************************************************************************************************
+ * Shader class.
+ *
+ * Representation of a shader. It supports vertex and fragment shaders. Contains utility methods to manipulate the
+ * shader uniform values.
+ **********************************************************************************************************************/
 class Shader
 {
 public:
-	// Constructor and destructor
-	Shader(const std::string &filepath);
+	Shader(const std::string &vertexSourceFile, const std::string &fragmentSourceFile);
 	~Shader();
 
 	void use() const;
 
 private:
 	static std::string readFile_(const std::string &filePath);
-	static std::unordered_map<ShaderType, std::string> parse_(const std::string &source);
-	static std::array<unsigned int, 2> compile_(const std::unordered_map<ShaderType, std::string> &shaderSources);
-	static unsigned int create_(const std::array<unsigned int, 2> &shaders);
+	static unsigned int compile_(const std::string &vertexSource, const std::string &fragmentSource);
 
 	unsigned int id_;   // Shader program object ID
 };

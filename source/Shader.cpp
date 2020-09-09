@@ -1,29 +1,24 @@
-#include <fstream>
-#include <glad/glad.h>
-#include <sstream>
-#include <vector>
 #include "Shader.h"
 
 /***********************************************************************************************************************
- * Constructor.
+ * Constructor. Creates a shader program from the shader source codes.
  *
- * @param const std::string &filepath   Path of the GLSL source file.
+ * @param const std::string &vertexSourceFile     Path of the vertex shader source code file.
+ * @param const std::string &fragmentSourceFile   Path of the fragment shader source code file.
  **********************************************************************************************************************/
-Shader::Shader(const std::string &filepath)
+Shader::Shader(const std::string &vertexSourceFile, const std::string &fragmentSourceFile)
 	: id_ {0}
 {
-	// Read the GLSL file
-	std::string fileContent = readFile_(filepath);
-	// Parse the file into 2 separate shader sources
-	std::unordered_map<ShaderType, std::string> shaderSources = parse_(fileContent);
-	// Compile the shaders
-	std::array<unsigned int, 2> shaders = compile_(shaderSources);
-	// Create the shader program object
-	id_ = create_(shaders);
+	// Read the vertex and fragment shader source codes from file
+	std::string vertexSource   = readFile_(vertexSourceFile);
+	std::string fragmentSource = readFile_(fragmentSourceFile);
+
+	// Compile and link the shaders into a shader program
+	id_ = compile_(vertexSource, fragmentSource);
 }
 
 /***********************************************************************************************************************
- * Destructor.
+ * Destructor. Deletes the shader program.
  **********************************************************************************************************************/
  Shader::~Shader()
 {
@@ -32,6 +27,8 @@ Shader::Shader(const std::string &filepath)
 
 /***********************************************************************************************************************
  * Use the current shader program.
+ *
+ * @return void
  **********************************************************************************************************************/
 void Shader::use() const
 {
@@ -69,75 +66,31 @@ std::string Shader::readFile_(const std::string &filepath)
 }
 
 /***********************************************************************************************************************
- * Parses the shader source file and splits it into vertex shader and fragment shader sources.
+ * Compiles the GLSL shader sources and links them into a shader program.
  *
- * @param const std::string &source   The combined shader source string.
+ * @param const std::string &vertexSource     Vertex shader source code.
+ * @param const std::string &fragmentSource   Fragment shader source code.
  *
- * @return std::unordered_map<ShaderType, std::string>   Unordered map containing the 2 separate shader sources.
+ * @return unsigned int   Shader program ID.
  **********************************************************************************************************************/
-std::unordered_map<ShaderType, std::string> Shader::parse_(const std::string &source)
+unsigned int Shader::compile_(const std::string &vertexSource, const std::string &fragmentSource)
 {
-	std::unordered_map<ShaderType, std::string> shaderSources;
-	ShaderType type = ShaderType::NONE;
-	std::stringstream buffer[2];
-	std::stringstream stream(source);
-	std::string line;
+	unsigned int shaders[2];
 
-	while (getline(stream, line)) {
-		if (line.find("#VertexShader") != std::string::npos) {
-			type = ShaderType::VERTEX;
-		}
-		else if (line.find("#FragmentShader") != std::string::npos) {
-			type = ShaderType::FRAGMENT;
-		}
-		else {
-			buffer[static_cast<int>(type)] << line << '\n';
-		}
-	}
+	// Create and compile the vertex shader
+	shaders[0] = glCreateShader(GL_VERTEX_SHADER);
+	const char *vSource = vertexSource.c_str();
+	glShaderSource(shaders[0], 1, &vSource, nullptr);
+	glCompileShader(shaders[0]);
 
-	shaderSources[ShaderType::VERTEX]   = buffer[0].str();
-	shaderSources[ShaderType::FRAGMENT] = buffer[1].str();
+	// Create and compile the fragment shader
+	shaders[1] = glCreateShader(GL_FRAGMENT_SHADER);
+	const char *fSource = fragmentSource.c_str();
+	glShaderSource(shaders[1], 1, &fSource, nullptr);
+	glCompileShader(shaders[1]);
 
-	return shaderSources;
-}
-
-/***********************************************************************************************************************
- * Compiles the given GLSL shader sources.
- *
- * @param const std::unordered_map<ShaderType, std::string> &shaderSources   GLSL shader sources.
- *
- * @return std::array<unsigned int, 2>   Array containing the shader object IDs.
- **********************************************************************************************************************/
-std::array<unsigned int, 2> Shader::compile_(const std::unordered_map<ShaderType, std::string> &shaderSources)
-{
-	std::array<unsigned int, 2> shaders{};
-	int index = 0;
-
-	for (auto &shaderSource : shaderSources) {
-		ShaderType type    = shaderSource.first;
-		const char *source = shaderSource.second.c_str();
-
-		unsigned int shader = 0;
-
-		// Create the shader
-		switch (type) {
-			case ShaderType::VERTEX:
-				shader = glCreateShader(GL_VERTEX_SHADER);
-				break;
-
-			case ShaderType::FRAGMENT:
-				shader = glCreateShader(GL_FRAGMENT_SHADER);
-				break;
-
-			default:
-				break;
-		}
-
-		// Compile the shader
-		glShaderSource(shader, 1, &source, nullptr);
-		glCompileShader(shader);
-
-		// Check for shader compile errors
+	// Check for shader compile errors
+	for (auto shader : shaders) {
 		int isCompiled = 0;
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
 
@@ -149,22 +102,8 @@ std::array<unsigned int, 2> Shader::compile_(const std::unordered_map<ShaderType
 			glDeleteShader(shader);
 			throw std::runtime_error("Failed to compile shader");
 		}
-
-		shaders[index++] = shader;
 	}
 
-	return shaders;
-}
-
-/***********************************************************************************************************************
- * Creates an OpenGL shader program object from the shaders.
- *
- * @param const std::array<unsigned int, 2> &shaders   Array of shader object IDs.
- *
- * @return unsigned int   ID of the OpenGL shader program object.
- **********************************************************************************************************************/
-unsigned int Shader::create_(const std::array<unsigned int, 2> &shaders)
-{
 	// Create the shader program
 	unsigned int program = glCreateProgram();
 
