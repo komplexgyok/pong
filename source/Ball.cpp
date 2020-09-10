@@ -43,3 +43,17 @@ glm::vec2 Ball::move(float deltaTime, int windowWidth, int windowHeight)
 
 	return getPosition();
 }
+
+/***********************************************************************************************************************
+ * Resets the ball to the given position with the given velocity.
+ *
+ * @param const glm::vec2 &position   Position.
+ * @param const glm::vec2 &velocity   Velocity.
+ *
+ * @return void
+ **********************************************************************************************************************/
+void Ball::reset(const glm::vec2 &position, const glm::vec2 &velocity)
+{
+	position_ = position;
+	velocity_ = velocity;
+}

@@ -28,12 +28,13 @@ public:
 	void setPositionX(float positionX) { position_.x = positionX; }
 	void setPositionY(float positionY) { position_.y = positionY; }
 
+	void setVelocity(const glm::vec2 &velocity) { velocity_ = velocity; }
 	void setVelocityX(float velocityX) { velocity_.x = velocityX; }
 	void setVelocityY(float velocityY) { velocity_.y = velocityY; }
 
 	virtual void draw(Renderer *renderer);
 
-private:
+protected:
 	glm::vec2 position_;   // Position (x, y)
 	glm::vec2 size_;       // Size (width, height)
 	glm::vec4 color_;      // Color (RGBA)

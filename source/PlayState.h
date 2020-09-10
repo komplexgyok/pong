@@ -31,6 +31,8 @@ public:
 	void render() override;
 
 private:
+	void checkCollisions_();
+
 	Game *game_;        // Game instance
 	Entity *paddle1_;   // Player 1's paddle
 	Entity *paddle2_;   // Player 2's paddle

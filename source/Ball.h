@@ -13,4 +13,5 @@ public:
 	);
 
 	glm::vec2 move(float deltaTime, int windowWidth, int windowHeight);
+	void reset(const glm::vec2 &position, const glm::vec2 &velocity);
 };
