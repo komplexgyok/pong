@@ -70,10 +70,13 @@ void IntroState::update(float deltaTime)
 void IntroState::render()
 {
 	// Background color
-	glClearColor(1.0, 0.0, 0.0, 1.0);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// Actual rendering
+	float x = static_cast<float>(game_->getWindow()->getWidth()) / 2.0f - 510.0f;
+	float y = static_cast<float>(game_->getWindow()->getHeight()) / 2.0f - 50.0f;
+
+	game_->getTextRenderer()->drawText("KomplexGyok presents", x, y);
 
 	// Swap front and back buffers
 	glfwSwapBuffers(game_->getWindow()->getNativeWindow());

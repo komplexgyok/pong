@@ -47,6 +47,10 @@ Window::Window(const std::string &title, int width, int height)
 
 	// Set the size of the rendering window
 	glViewport(0, 0, width_, height_);
+
+	// Enable color blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 /***********************************************************************************************************************

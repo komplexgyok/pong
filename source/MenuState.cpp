@@ -72,10 +72,21 @@ void MenuState::update(float deltaTime)
 void MenuState::render()
 {
 	// Background color
-	glClearColor(0.0, 1.0, 0.0, 1.0);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// Actual rendering
+	float x = static_cast<float>(game_->getWindow()->getWidth()) / 2.0f - 510.0f;
+	float y = 50.0f;
+
+	game_->getTextRenderer()->drawText("PONG", x, y);
+	y += 200.0f;
+	game_->getTextRenderer()->drawText("Player VS AI", x, y);
+	y += 100.0f;
+	game_->getTextRenderer()->drawText("Player VS Player", x, y);
+	y += 100.0f;
+	game_->getTextRenderer()->drawText("Options", x, y);
+	y += 100.0f;
+	game_->getTextRenderer()->drawText("Quit", x, y);
 
 	// Swap front and back buffers
 	glfwSwapBuffers(game_->getWindow()->getNativeWindow());

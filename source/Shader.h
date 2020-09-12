@@ -22,6 +22,7 @@ public:
 	void use() const;
 
 	// Uniform setters
+	void setInteger(const std::string &name, int value) const;
 	void setVector4(const std::string &name, const glm::vec4 &vector) const;
 	void setMatrix4(const std::string &name, const glm::mat4 &matrix) const;
 

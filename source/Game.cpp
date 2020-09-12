@@ -7,8 +7,12 @@
 Game::Game(const std::string &title, int width, int height)
 	: window_ {new Window(title, width, height)}
 	, renderer_ {new Renderer(width, height)}
+	, textRenderer_ {new TextRenderer(width, height)}
 	, keys_ {}
 {
+	// Load the font file
+	textRenderer_->loadFont("../resources/fonts/Makisupa.ttf", 100);
+
 	pushState(new IntroState(this));
 }
 

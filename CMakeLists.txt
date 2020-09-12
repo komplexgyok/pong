@@ -23,6 +23,7 @@ set(SOURCE
     ${SOURCE_DIR}/PlayState.cpp
     ${SOURCE_DIR}/Renderer.cpp
     ${SOURCE_DIR}/Shader.cpp
+    ${SOURCE_DIR}/TextRenderer.cpp
     ${SOURCE_DIR}/VertexArray.cpp
     ${SOURCE_DIR}/VertexBuffer.cpp
     ${SOURCE_DIR}/Window.cpp
@@ -46,3 +47,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 # Glm
 add_subdirectory(${LIBRARIES_DIR}/glm EXCLUDE_FROM_ALL)
 target_link_libraries(${PROJECT_NAME} PRIVATE glm)
+
+# Freetype2
+set(CMAKE_DISABLE_FIND_PACKAGE_HarfBuzz TRUE)
+add_subdirectory(${LIBRARIES_DIR}/freetype2 EXCLUDE_FROM_ALL)
+target_include_directories(${PROJECT_NAME} PRIVATE ${LIBRARIES_DIR}/freetype2/include)
+target_link_libraries(${PROJECT_NAME} PRIVATE freetype)

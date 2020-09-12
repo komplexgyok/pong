@@ -3,6 +3,7 @@
 #include <stack>
 #include "GameState.h"
 #include "Renderer.h"
+#include "TextRenderer.h"
 #include "Window.h"
 
 // Representation of the game
@@ -16,6 +17,7 @@ public:
 	// Getters
 	[[nodiscard]] inline Window *getWindow() const { return window_; }
 	[[nodiscard]] inline Renderer *getRenderer() const { return renderer_; }
+	[[nodiscard]] inline TextRenderer *getTextRenderer() const { return textRenderer_; }
 	[[nodiscard]] inline bool getKey(unsigned int index) const { return keys_[index]; }
 
 	// Setter
@@ -32,5 +34,6 @@ private:
 	Window *window_;                  // Game window object
 	std::stack<GameState*> states_;   // Stack of game states
 	Renderer *renderer_;              // Renderer object
+	TextRenderer *textRenderer_;      // Text renderer object
 	bool keys_[1024];                 // Stores if the keys are pressed or not
 };

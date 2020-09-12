@@ -36,6 +36,19 @@ void Shader::use() const
 }
 
 /***********************************************************************************************************************
+ * Sets an integer uniform inside the shader.
+ *
+ * @param const std::string &name   Name of the uniform to set.
+ * @param int value                 Value.
+ *
+ * @return void
+ **********************************************************************************************************************/
+void Shader::setInteger(const std::string &name, int value) const
+{
+	glUniform1i(glGetUniformLocation(id_, name.c_str()), value);
+}
+
+/***********************************************************************************************************************
  * Sets a 4D vector uniform inside the shader.
  *
  * @param const std::string &name   Name of the uniform to set.
