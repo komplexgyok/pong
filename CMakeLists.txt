@@ -24,6 +24,7 @@ set(SOURCE
     ${SOURCE_DIR}/Renderable.cpp
     ${SOURCE_DIR}/Renderer.cpp
     ${SOURCE_DIR}/Shader.cpp
+    ${SOURCE_DIR}/Sprite.cpp
     ${SOURCE_DIR}/TextRenderer.cpp
     ${SOURCE_DIR}/VertexArray.cpp
     ${SOURCE_DIR}/VertexBuffer.cpp
