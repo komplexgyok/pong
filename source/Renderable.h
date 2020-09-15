@@ -19,6 +19,11 @@ public:
 	[[nodiscard]] inline const glm::vec2 &getSize() const { return size; }
 	[[nodiscard]] inline const glm::vec4 &getColor() const { return color; }
 
+	// Setters
+	void setPosition(const glm::vec2 &position) { this->position = position; }
+	void setPositionX(float positionX) { position.x = positionX; }
+	void setPositionY(float positionY) { position.y = positionY; }
+
 protected:
 	glm::vec2 position;   // Position (x, y)
 	glm::vec2 size;       // Size (width, height)
