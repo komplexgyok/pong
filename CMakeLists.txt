@@ -27,6 +27,7 @@ set(SOURCE
     ${SOURCE_DIR}/Shader.cpp
     ${SOURCE_DIR}/Sprite.cpp
     ${SOURCE_DIR}/TextRenderer.cpp
+    ${SOURCE_DIR}/Texture.cpp
     ${SOURCE_DIR}/VertexArray.cpp
     ${SOURCE_DIR}/VertexBuffer.cpp
     ${SOURCE_DIR}/Window.cpp
@@ -56,3 +57,7 @@ set(CMAKE_DISABLE_FIND_PACKAGE_HarfBuzz TRUE)
 add_subdirectory(${LIBRARIES_DIR}/freetype2 EXCLUDE_FROM_ALL)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LIBRARIES_DIR}/freetype2/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
+
+# Stb_image
+add_subdirectory(${LIBRARIES_DIR}/stb_image EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} PRIVATE stb_image)
