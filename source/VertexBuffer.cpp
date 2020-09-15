@@ -25,7 +25,7 @@ VertexBuffer::~VertexBuffer()
  *
  * @return void
  **********************************************************************************************************************/
-void VertexBuffer::copy(float *data, unsigned int size) const
+void VertexBuffer::data(float *data, unsigned int size) const
 {
 	bind();
 	glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);

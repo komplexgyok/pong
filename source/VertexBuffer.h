@@ -11,10 +11,11 @@
 class VertexBuffer
 {
 public:
+	// Constructor and destructor
 	VertexBuffer();
 	~VertexBuffer();
 
-	void copy(float *data, unsigned int size) const;
+	void data(float *data, unsigned int size) const;
 	void bind() const;
 	void unbind() const;
 
