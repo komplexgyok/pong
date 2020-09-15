@@ -11,10 +11,11 @@
 class IndexBuffer
 {
 public:
+	// Constructor and destructor
 	IndexBuffer();
 	~IndexBuffer();
 
-	void copy(unsigned int *data, unsigned int size) const;
+	void data(unsigned int *data, unsigned int count) const;
 	void bind() const;
 	void unbind() const;
 

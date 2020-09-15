@@ -21,14 +21,14 @@ IndexBuffer::~IndexBuffer()
  * Copies the index data into the buffer's memory.
  *
  * @param unsigned int *data   Index data.
- * @param unsigned int size    Size of the index data in bytes.
+ * @param unsigned int count   Number of indices.
  *
  * @return void
  **********************************************************************************************************************/
-void IndexBuffer::copy(unsigned int *data, unsigned int size) const
+void IndexBuffer::data(unsigned int *data, unsigned int count) const
 {
 	bind();
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_DYNAMIC_DRAW);
 }
 
 /***********************************************************************************************************************
