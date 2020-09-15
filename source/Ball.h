@@ -1,10 +1,14 @@
 #pragma once
 
-#include "Entity.h"
+#include "Sprite.h"
 
-class Ball : public Entity
+/***********************************************************************************************************************
+ * Ball class.
+ **********************************************************************************************************************/
+class Ball : public Sprite
 {
 public:
+	// Constructor
 	Ball(
 		const glm::vec2 &position,
 		const glm::vec2 &size,
@@ -12,6 +16,17 @@ public:
 		const glm::vec2 &velocity = glm::vec2(0.0f, 0.0f)
 	);
 
+	// Getter
+	[[nodiscard]] inline const glm::vec2 &getVelocity() const { return velocity_; }
+
+	// Setters
+	void setVelocity(const glm::vec2 &velocity) { velocity_ = velocity; }
+	void setVelocityX(float velocityX) { velocity_.x = velocityX; }
+	void setVelocityY(float velocityY) { velocity_.y = velocityY; }
+
 	glm::vec2 move(float deltaTime, int windowWidth, int windowHeight);
 	void reset(const glm::vec2 &position, const glm::vec2 &velocity);
+
+private:
+	glm::vec2 velocity_;   // Velocity
 };

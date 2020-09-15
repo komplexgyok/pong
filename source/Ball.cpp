@@ -9,7 +9,8 @@
  * @param const glm::vec2 &velocity   Velocity.
  **********************************************************************************************************************/
 Ball::Ball(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, const glm::vec2 &velocity)
-	: Entity(position, size, color, velocity)
+	: Sprite(position.x, position.y, size.x, size.y, color.r, color.g, color.b, color.a)
+	, velocity_ {velocity}
 {}
 
 /***********************************************************************************************************************
@@ -54,6 +55,6 @@ glm::vec2 Ball::move(float deltaTime, int windowWidth, int windowHeight)
  **********************************************************************************************************************/
 void Ball::reset(const glm::vec2 &position, const glm::vec2 &velocity)
 {
-	position_ = position;
+	this->position = position;
 	velocity_ = velocity;
 }
