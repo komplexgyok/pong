@@ -14,6 +14,8 @@
 struct QuadVertex
 {
 	glm::vec2 position;
+	glm::vec2 textureCoordinate;
+	float textureId;
 	glm::vec4 color;
 };
 
@@ -25,8 +27,10 @@ const unsigned int RENDERER_BUFFER_SIZE      = RENDERER_SPRITE_SIZE * RENDERER_M
 const unsigned int RENDERER_INDICES_SIZE     = RENDERER_MAX_SPRITES * 6;
 
 // Vertex attribute constants
-const unsigned int SHADER_POSITION_INDEX = 0;
-const unsigned int SHADER_COLOR_INDEX    = 1;
+const unsigned int SHADER_POSITION_INDEX           = 0;
+const unsigned int SHADER_TEXTURE_COORDINATE_INDEX = 1;
+const unsigned int SHADER_TEXTURE_ID_INDEX         = 2;
+const unsigned int SHADER_COLOR_INDEX              = 3;
 
 /***********************************************************************************************************************
  * Renderer class.
@@ -46,9 +50,10 @@ public:
 	void render();
 
 private:
-	QuadVertex *buffer_;           // Buffer for storing all the sprite data on a layer
-	VertexArray *vertexArray_;     // Vertex array object
-	VertexBuffer *vertexBuffer_;   // Vertex buffer object
-	IndexBuffer *indexBuffer_;     // Index buffer object
-	unsigned int indexCount_;      // Number of total indices
+	QuadVertex *buffer_;                       // Buffer for storing all the sprite data on a layer
+	VertexArray *vertexArray_;                 // Vertex array object
+	VertexBuffer *vertexBuffer_;               // Vertex buffer object
+	IndexBuffer *indexBuffer_;                 // Index buffer object
+	unsigned int indexCount_;                  // Number of total indices
+	std::vector<unsigned int> textureSlots_;   // Vector of texture ids
 };

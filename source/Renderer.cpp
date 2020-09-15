@@ -24,6 +24,14 @@ Renderer::Renderer()
 	glEnableVertexAttribArray(SHADER_POSITION_INDEX);
 	glVertexAttribPointer(SHADER_POSITION_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_QUAD_VERTEX_SIZE, nullptr);
 
+	// Texture coordinate
+	glEnableVertexAttribArray(SHADER_TEXTURE_COORDINATE_INDEX);
+	glVertexAttribPointer(SHADER_TEXTURE_COORDINATE_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_QUAD_VERTEX_SIZE, (const GLvoid*)(offsetof(QuadVertex, textureCoordinate)));
+
+	// Texture id
+	glEnableVertexAttribArray(SHADER_TEXTURE_ID_INDEX);
+	glVertexAttribPointer(SHADER_TEXTURE_ID_INDEX, 1, GL_FLOAT, GL_FALSE, RENDERER_QUAD_VERTEX_SIZE, (const GLvoid*)(offsetof(QuadVertex, textureId)));
+
 	// Color
 	glEnableVertexAttribArray(SHADER_COLOR_INDEX);
 	glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_FLOAT, GL_FALSE, RENDERER_QUAD_VERTEX_SIZE, (const GLvoid*)(offsetof(QuadVertex, color)));
@@ -95,25 +103,59 @@ void Renderer::end()
  **********************************************************************************************************************/
 void Renderer::add(const Renderable *renderable)
 {
-	const glm::vec2 position = renderable->getPosition();
-	const glm::vec2 size     = renderable->getSize();
-	const glm::vec4 color    = renderable->getColor();
+	const glm::vec2 position                         = renderable->getPosition();
+	const glm::vec2 size                             = renderable->getSize();
+	const std::vector<glm::vec2> &textureCoordinates = renderable->getTextureCoordinates();
+	const glm::vec4 color                            = renderable->getColor();
+	const unsigned int textureId                     = renderable->getTextureId();
+
+	float textureSlot = 0.0f;
+
+	if (textureId > 0) {
+		bool found = false;
+
+		for (int i = 0; i < textureSlots_.size(); i++) {
+			if (textureSlots_[i] == textureId) {
+				textureSlot = static_cast<float>(i + 1);
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			if (textureSlots_.size() > 32) {
+				end();
+				render();
+				begin();
+			}
+			textureSlots_.push_back(textureId);
+			textureSlot = static_cast<float>(textureSlots_.size());
+		}
+	}
 
 	// Fill the buffer with the quad vertex data
-	buffer_->position = position;
-	buffer_->color = color;
+	buffer_->position          = position;
+	buffer_->textureCoordinate = textureCoordinates.at(0);
+	buffer_->textureId         = textureSlot;
+	buffer_->color             = color;
 	buffer_++;
 
-	buffer_->position = glm::vec2(position.x, position.y + size.y);
-	buffer_->color = color;
+	buffer_->position          = glm::vec2(position.x, position.y + size.y);
+	buffer_->textureCoordinate = textureCoordinates.at(1);
+	buffer_->textureId         = textureSlot;
+	buffer_->color             = color;
 	buffer_++;
 
-	buffer_->position = glm::vec2(position.x + size.x, position.y + size.y);
-	buffer_->color = color;
+	buffer_->position          = glm::vec2(position.x + size.x, position.y + size.y);
+	buffer_->textureCoordinate = textureCoordinates.at(2);
+	buffer_->textureId         = textureSlot;
+	buffer_->color             = color;
 	buffer_++;
 
-	buffer_->position = glm::vec2(position.x + size.x, position.y);
-	buffer_->color = color;
+	buffer_->position          = glm::vec2(position.x + size.x, position.y);
+	buffer_->textureCoordinate = textureCoordinates.at(3);
+	buffer_->textureId         = textureSlot;
+	buffer_->color             = color;
 	buffer_++;
 
 	// We use 6 indices to draw a quad
@@ -127,6 +169,11 @@ void Renderer::add(const Renderable *renderable)
  **********************************************************************************************************************/
 void Renderer::render()
 {
+	for (int i = 0; i < textureSlots_.size(); i++) {
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, textureSlots_[i]);
+	}
+
 	vertexArray_->bind();
 	indexBuffer_->bind();
 
