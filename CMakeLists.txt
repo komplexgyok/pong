@@ -21,6 +21,7 @@ set(SOURCE
     ${SOURCE_DIR}/Layer.cpp
     ${SOURCE_DIR}/main.cpp
     ${SOURCE_DIR}/MenuState.cpp
+    ${SOURCE_DIR}/Paddle.cpp
     ${SOURCE_DIR}/PlayState.cpp
     ${SOURCE_DIR}/Renderable.cpp
     ${SOURCE_DIR}/Renderer.cpp
