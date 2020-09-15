@@ -25,6 +25,7 @@ public:
 	void setInteger(const std::string &name, int value) const;
 	void setVector4(const std::string &name, const glm::vec4 &vector) const;
 	void setMatrix4(const std::string &name, const glm::mat4 &matrix) const;
+	void setUniform1iv(const std::string &name, int *value, int count) const;
 
 private:
 	static std::string readFile_(const std::string &filePath);

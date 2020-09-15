@@ -74,6 +74,11 @@ void Shader::setMatrix4(const std::string &name, const glm::mat4 &matrix) const
 	glUniformMatrix4fv(glGetUniformLocation(id_, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
+void Shader::setUniform1iv(const std::string &name, int *value, int count) const
+{
+	glUniform1iv(glGetUniformLocation(id_, name.c_str()), count, value);
+}
+
 /***********************************************************************************************************************
  * Reads the given file's content into a string.
  *
