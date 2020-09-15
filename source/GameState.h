@@ -1,6 +1,12 @@
 #pragma once
 
-// Game state interface
+#include "Layer.h"
+
+/***********************************************************************************************************************
+ * GameState class.
+ *
+ * Functions as an interface for creating game states.
+ **********************************************************************************************************************/
 class GameState
 {
 public:
@@ -16,4 +22,7 @@ public:
 	virtual void input(float deltaTime) = 0;
 	virtual void update(float deltaTime) = 0;
 	virtual void render() = 0;
+
+protected:
+	Layer *layer {nullptr};   // All states contains a layer
 };
