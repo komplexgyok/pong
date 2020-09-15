@@ -18,6 +18,7 @@ set(SOURCE
     ${SOURCE_DIR}/Game.cpp
     ${SOURCE_DIR}/IndexBuffer.cpp
     ${SOURCE_DIR}/IntroState.cpp
+    ${SOURCE_DIR}/Layer.cpp
     ${SOURCE_DIR}/main.cpp
     ${SOURCE_DIR}/MenuState.cpp
     ${SOURCE_DIR}/PlayState.cpp
