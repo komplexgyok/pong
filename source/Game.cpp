@@ -6,7 +6,7 @@
  **********************************************************************************************************************/
 Game::Game(const std::string &title, int width, int height)
 	: window_ {new Window(title, width, height)}
-	, renderer_ {new Renderer(width, height)}
+	, renderer_ {new Renderer()}
 	, textRenderer_ {new TextRenderer(width, height)}
 	, keys_ {}
 {
