@@ -17,29 +17,31 @@ PlayState::PlayState(Game *game)
 	glfwSetMouseButtonCallback(game_->getWindow()->getNativeWindow(), mouseButtonCallback);
 	glfwSetCursorPosCallback(game_->getWindow()->getNativeWindow(), cursorPositionCallback);
 
-	// Init player 1's paddle
-	paddle1_ = new Entity(
-		glm::vec2(20.0f, static_cast<float>(game_->getWindow()->getHeight()) / 2.0f - 80.0f),
-		glm::vec2(40.0f, 160.0f),
-		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-		glm::vec2(0.0f, 500.0f)
-	);
+	// Create a 2D layer
+	layer = new Layer(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	// Init player 2's paddle
-	paddle2_ = new Entity(
-		glm::vec2(static_cast<float>(game_->getWindow()->getWidth()) - 60.0f, static_cast<float>(game_->getWindow()->getHeight()) / 2.0f - 80.0f),
-		glm::vec2(40.0f, 160.0f),
-		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-		glm::vec2(0.0f, 500.0f)
-	);
+	// Init the net
+	float netY = 0.0f;
+	while (netY <= static_cast<float>(WINDOW_HEIGHT)) {
+		layer->add(new Sprite(
+			static_cast<float>(WINDOW_WIDTH) / 2.0f - NET_SIZE.x / 2.0f, netY,
+			NET_SIZE.x, NET_SIZE.y,
+			NET_COLOR.r, NET_COLOR.g, NET_COLOR.b, NET_COLOR.a
+		));
+		netY += 60.0f;
+	}
+
+	// Init the paddles
+	paddle1_ = new Paddle(PADDLE1_POSITION, PADDLE_SIZE, PADDLE_COLOR, PADDLE_VELOCITY);
+	paddle2_ = new Paddle(PADDLE2_POSITION, PADDLE_SIZE, PADDLE_COLOR, PADDLE_VELOCITY);
 
 	// Init the ball
-	ball_ = new Ball(
-		glm::vec2(600.0f, 200.0f),
-		glm::vec2(30.0f, 30.0f),
-		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-		glm::vec2(-500.0f, 100.0f)
-	);
+	ball_ = new Ball(BALL_POSITION, BALL_SIZE, BALL_COLOR, BALL_VELOCITY);
+
+	// Add all sprites to the layer
+	layer->add(paddle1_);
+	layer->add(paddle2_);
+	layer->add(ball_);
 }
 
 /***********************************************************************************************************************
@@ -52,7 +54,8 @@ PlayState::~PlayState()
 	delete ball_;
 }
 
-bool detectCollision(Entity *one, Entity *two);
+// Local function declaration
+bool detectCollision(Sprite *one, Sprite *two);
 
 void PlayState::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
@@ -117,8 +120,11 @@ void PlayState::input(float deltaTime)
 
 void PlayState::update(float deltaTime)
 {
+	int windowWidth  = game_->getWindow()->getWidth();
+	int windowHeight = game_->getWindow()->getHeight();
+
 	// Move the ball
-	ball_->move(deltaTime, game_->getWindow()->getWidth(), game_->getWindow()->getHeight());
+	ball_->move(deltaTime, windowWidth, windowHeight);
 
 	// Move AI up
 	if (ball_->getPosition().y < paddle2_->getPosition().y) {
@@ -129,7 +135,7 @@ void PlayState::update(float deltaTime)
 
 	// Move AI down
 	if (ball_->getPosition().y > paddle2_->getPosition().y) {
-		if (paddle2_->getPosition().y <= static_cast<float>(game_->getWindow()->getHeight()) - paddle2_->getSize().y) {
+		if (paddle2_->getPosition().y <= static_cast<float>(windowHeight) - paddle2_->getSize().y) {
 			paddle2_->setPositionY(paddle2_->getPosition().y + paddle2_->getVelocity().y * deltaTime);
 		}
 	}
@@ -137,8 +143,11 @@ void PlayState::update(float deltaTime)
 	// Check for collisions
 	checkCollisions_();
 
-	if ((ball_->getPosition().x < 0.0f) || (ball_->getPosition().x + ball_->getSize().x > static_cast<float>(game_->getWindow()->getWidth()))) {
-		ball_->reset(glm::vec2(600.0f, 200.0f), glm::vec2(-500.0f, 100.0f));
+	// Reset the paddles and the ball if the ball leaves the play area
+	if ((ball_->getPosition().x < 0.0f) || (ball_->getPosition().x + ball_->getSize().x > static_cast<float>(windowWidth))) {
+		paddle1_->reset(PADDLE1_POSITION, PADDLE_VELOCITY);
+		paddle2_->reset(PADDLE2_POSITION, PADDLE_VELOCITY);
+		ball_->reset(BALL_POSITION, BALL_VELOCITY);
 	}
 }
 
@@ -148,24 +157,7 @@ void PlayState::render()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	static float netY = 0.0f;
-
-	// Net
-	while (netY <= static_cast<float>(game_->getWindow()->getHeight())) {
-		game_->getRenderer()->drawSprite(
-			glm::vec2(static_cast<float>(game_->getWindow()->getWidth()) / 2.0f - 5.0f, netY),
-			glm::vec2(10.0f, 40.0f)
-		);
-		netY += 60.0f;
-	}
-	netY = 0.0f;
-
-	// Paddle1
-	paddle1_->draw(game_->getRenderer());
-	// Paddle2
-	paddle2_->draw(game_->getRenderer());
-	// Ball
-	ball_->draw(game_->getRenderer());
+	layer->render();
 
 	// Swap front and back buffers
 	glfwSwapBuffers(game_->getWindow()->getNativeWindow());
@@ -179,7 +171,7 @@ void PlayState::render()
  *
  * @return bool   Is there any collision between the 2 objects?
  **********************************************************************************************************************/
-bool detectCollision(Entity *one, Entity *two)
+bool detectCollision(Sprite *one, Sprite *two)
 {
 	// Collision on x-axis
 	bool collisionX = one->getPosition().x + one->getSize().x >= two->getPosition().x &&
