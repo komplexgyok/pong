@@ -18,7 +18,7 @@ struct QuadVertex
 };
 
 // Renderer constants
-const unsigned int RENDERER_MAX_SPRITES      = 10;
+const unsigned int RENDERER_MAX_SPRITES      = 100;
 const unsigned int RENDERER_QUAD_VERTEX_SIZE = sizeof(QuadVertex);
 const unsigned int RENDERER_SPRITE_SIZE      = RENDERER_QUAD_VERTEX_SIZE * 4;
 const unsigned int RENDERER_BUFFER_SIZE      = RENDERER_SPRITE_SIZE * RENDERER_MAX_SPRITES;
