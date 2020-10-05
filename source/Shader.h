@@ -1,11 +1,7 @@
 #pragma once
 
-#include <fstream>
-#include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <string>
-#include <vector>
 
 /***********************************************************************************************************************
  * Shader class.
@@ -16,10 +12,14 @@
 class Shader
 {
 public:
-	Shader(const std::string &vertexSourceFile, const std::string &fragmentSourceFile);
-	~Shader();
+	// Constructor
+	Shader();
 
+	void compile(const std::string &vertexSource, const std::string &fragmentSource);
 	void use() const;
+
+	// Getter
+	[[nodiscard]] inline unsigned int getId() const { return id_; }
 
 	// Uniform setters
 	void setInteger(const std::string &name, int value) const;
@@ -28,8 +28,5 @@ public:
 	void setUniform1iv(const std::string &name, int *value, int count) const;
 
 private:
-	static std::string readFile_(const std::string &filePath);
-	static unsigned int compile_(const std::string &vertexSource, const std::string &fragmentSource);
-
 	unsigned int id_;   // Shader program object ID
 };
