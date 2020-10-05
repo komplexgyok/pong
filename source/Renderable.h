@@ -4,8 +4,10 @@
 #include <vector>
 #include "Texture.h"
 
+class Renderer;
+
 /***********************************************************************************************************************
- * Renderable class.
+ * Renderable class. Abstract.
  *
  * Represents everything that can be drawn.
  **********************************************************************************************************************/
@@ -13,8 +15,10 @@ class Renderable
 {
 public:
 	// Constructor and destructor
-	Renderable(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color = glm::vec4(1.0f));
+	Renderable(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color);
 	virtual ~Renderable() = default;
+
+	virtual void submit(Renderer *renderer) const = 0;
 
 	// Getters
 	[[nodiscard]] inline const glm::vec2 &getPosition() const { return position; }
