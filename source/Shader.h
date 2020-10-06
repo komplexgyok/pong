@@ -16,6 +16,7 @@ public:
 	Shader();
 
 	void compile(const std::string &vertexSource, const std::string &fragmentSource);
+	void destroy() const;
 	void use() const;
 
 	// Getter
