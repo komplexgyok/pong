@@ -28,6 +28,7 @@ set(SOURCE
     ${SOURCE_DIR}/ResourceManager.cpp
     ${SOURCE_DIR}/Shader.cpp
     ${SOURCE_DIR}/Sprite.cpp
+    ${SOURCE_DIR}/Text.cpp
     ${SOURCE_DIR}/Texture.cpp
     ${SOURCE_DIR}/VertexArray.cpp
     ${SOURCE_DIR}/VertexBuffer.cpp
