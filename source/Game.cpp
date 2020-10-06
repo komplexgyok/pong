@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "IntroState.h"
+#include "ResourceManager.h"
 
 /***********************************************************************************************************************
  * Constructor.
@@ -7,11 +8,24 @@
 Game::Game(const std::string &title, int width, int height)
 	: window_ {new Window(title, width, height)}
 	, renderer_ {new Renderer()}
-	, textRenderer_ {new TextRenderer(width, height)}
 	, keys_ {}
+	, paddle1 {nullptr}
+	, paddle2 {nullptr}
+	, ball {nullptr}
+	, layer {nullptr}
 {
+	// Load shader
+	ResourceManager::loadShader("../resources/shaders/quad-vs.glsl", "../resources/shaders/quad-fs.glsl", "quad");
+
+	// Load textures
+	ResourceManager::loadTexture("../resources/textures/paddle.png", "paddle");
+	ResourceManager::loadTexture("../resources/textures/ball.png", "ball");
+
 	// Load the font file
-	textRenderer_->loadFont("../resources/fonts/Makisupa.ttf", 100);
+	ResourceManager::loadFont("../resources/fonts/Makisupa.ttf", 100, "makisupa100");
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	pushState(new IntroState(this));
 }
@@ -21,7 +35,13 @@ Game::Game(const std::string &title, int width, int height)
  **********************************************************************************************************************/
 Game::~Game()
 {
+	ResourceManager::clear();
 	delete window_;
+	delete renderer_;
+	delete layer;
+	delete paddle1;
+	delete paddle2;
+	delete ball;
 }
 
 /***********************************************************************************************************************
@@ -54,8 +74,8 @@ void Game::run()
 	// Loop until the user closes the window
 	while(!glfwWindowShouldClose(window_->getNativeWindow())) {
 		auto currentFrame = static_cast<float>(glfwGetTime());
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+		deltaTime         = currentFrame - lastFrame;
+		lastFrame         = currentFrame;
 
 		// Process input
 		states_.top()->input(deltaTime);
