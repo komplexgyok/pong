@@ -25,6 +25,7 @@ set(SOURCE
     ${SOURCE_DIR}/PlayState.cpp
     ${SOURCE_DIR}/Renderable.cpp
     ${SOURCE_DIR}/Renderer.cpp
+    ${SOURCE_DIR}/ResourceManager.cpp
     ${SOURCE_DIR}/Shader.cpp
     ${SOURCE_DIR}/Sprite.cpp
     ${SOURCE_DIR}/Texture.cpp
