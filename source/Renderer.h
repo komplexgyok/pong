@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "IndexBuffer.h"
 #include "Renderable.h"
+#include "Text.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 
@@ -17,6 +18,7 @@ struct QuadVertex
 	glm::vec2 textureCoordinate;
 	float textureId;
 	glm::vec4 color;
+	float isText;
 };
 
 // Renderer constants
@@ -31,6 +33,7 @@ const unsigned int SHADER_POSITION_INDEX           = 0;
 const unsigned int SHADER_TEXTURE_COORDINATE_INDEX = 1;
 const unsigned int SHADER_TEXTURE_ID_INDEX         = 2;
 const unsigned int SHADER_COLOR_INDEX              = 3;
+const unsigned int SHADER_IS_TEXT_INDEX            = 4;
 
 /***********************************************************************************************************************
  * Renderer class.
@@ -47,6 +50,7 @@ public:
 	void begin();
 	void end();
 	void add(const Renderable *renderable);
+	void addText(const Text *text);
 	void render();
 
 private:

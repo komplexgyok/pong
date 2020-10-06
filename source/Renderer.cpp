@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include <iostream>
 
 /***********************************************************************************************************************
  * Constructor. Sets up the renderer for 2D quad rendering.
@@ -35,6 +36,10 @@ Renderer::Renderer()
 	// Color
 	glEnableVertexAttribArray(SHADER_COLOR_INDEX);
 	glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_FLOAT, GL_FALSE, RENDERER_QUAD_VERTEX_SIZE, (const GLvoid*)(offsetof(QuadVertex, color)));
+
+	// Is text
+	glEnableVertexAttribArray(SHADER_IS_TEXT_INDEX);
+	glVertexAttribPointer(SHADER_IS_TEXT_INDEX, 1, GL_FLOAT, GL_FALSE, RENDERER_QUAD_VERTEX_SIZE, (const GLvoid*)(offsetof(QuadVertex, isText)));
 
 	unsigned int indices[RENDERER_INDICES_SIZE];
 	unsigned int offset = 0;
@@ -138,28 +143,129 @@ void Renderer::add(const Renderable *renderable)
 	buffer_->textureCoordinate = textureCoordinates.at(0);
 	buffer_->textureId         = textureSlot;
 	buffer_->color             = color;
+	buffer_->isText            = 0.0f;
 	buffer_++;
 
 	buffer_->position          = glm::vec2(position.x, position.y + size.y);
 	buffer_->textureCoordinate = textureCoordinates.at(1);
 	buffer_->textureId         = textureSlot;
 	buffer_->color             = color;
+	buffer_->isText            = 0.0f;
 	buffer_++;
 
 	buffer_->position          = glm::vec2(position.x + size.x, position.y + size.y);
 	buffer_->textureCoordinate = textureCoordinates.at(2);
 	buffer_->textureId         = textureSlot;
 	buffer_->color             = color;
+	buffer_->isText            = 0.0f;
 	buffer_++;
 
 	buffer_->position          = glm::vec2(position.x + size.x, position.y);
 	buffer_->textureCoordinate = textureCoordinates.at(3);
 	buffer_->textureId         = textureSlot;
 	buffer_->color             = color;
+	buffer_->isText            = 0.0f;
 	buffer_++;
 
 	// We use 6 indices to draw a quad
 	indexCount_ += 6;
+}
+
+/***********************************************************************************************************************
+ * Adds a text object to the renderer's buffer. Anything added will be drawn with the next render() call.
+ *
+ * @param const Text *text   Text object.
+ *
+ * @return void
+ **********************************************************************************************************************/
+void Renderer::addText(const Text *text)
+{
+	float textureSlot = 0.0f;
+	bool found        = false;
+
+	for (int i = 0; i < textureSlots_.size(); i++) {
+		if (textureSlots_[i] == text->getFont()->getId()) {
+			textureSlot = static_cast<float>(i + 1);
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
+		if (textureSlots_.size() > 32) {
+			end();
+			render();
+			begin();
+		}
+		textureSlots_.push_back(text->getFont()->getId());
+		textureSlot = static_cast<float>(textureSlots_.size());
+	}
+
+	float x = text->getPosition().x;
+	float y = text->getPosition().y;
+
+	std::map<char, Character> characters = text->getFont()->getCharacters();
+	const glm::vec4 color                = text->getColor();
+
+	// Fix scale for now
+	float scale = 1.0f;
+
+	float textWidth = 0.0f;
+	float textHeight = 0.0f;
+
+	// Iterate through all characters
+	for (auto c : text->getText()) {
+		Character character = characters[c];
+
+		float x1     = x + character.bitmapLeft * scale;
+		float y1     = y + (characters['H'].bitmapTop - character.bitmapTop) * scale;
+		float width  = character.bitmapWidth * scale;
+		float height = character.bitmapHeight * scale;
+
+		x += character.advanceX * scale;
+		y += character.advanceY * scale;
+
+		// Skip glyphs that have no pixels
+		if (width == 0.0f || height == 0.0f) {
+			continue;
+		}
+
+		textWidth += character.advanceX * scale;
+		if (height > textHeight) {
+			textHeight = height;
+		}
+
+		buffer_->position          = glm::vec2(x1, y1);
+		buffer_->textureCoordinate = glm::vec2(character.textureOffset, 0.0f);
+		buffer_->textureId         = textureSlot;
+		buffer_->color             = color;
+		buffer_->isText            = 1.0f;
+		buffer_++;
+
+		buffer_->position          = glm::vec2(x1, y1 + height);
+		buffer_->textureCoordinate = glm::vec2(character.textureOffset, character.bitmapHeight / text->getFont()->getHeight());
+		buffer_->textureId         = textureSlot;
+		buffer_->color             = color;
+		buffer_->isText            = 1.0f;
+		buffer_++;
+
+		buffer_->position          = glm::vec2(x1 + width, y1 + height);
+		buffer_->textureCoordinate = glm::vec2(character.textureOffset + character.bitmapWidth / text->getFont()->getWidth(), character.bitmapHeight / text->getFont()->getHeight());
+		buffer_->textureId         = textureSlot;
+		buffer_->color             = color;
+		buffer_->isText            = 1.0f;
+		buffer_++;
+
+		buffer_->position          = glm::vec2(x1 + width, y1);
+		buffer_->textureCoordinate = glm::vec2(character.textureOffset + character.bitmapWidth / text->getFont()->getWidth(), 0.0f);
+		buffer_->textureId         = textureSlot;
+		buffer_->color             = color;
+		buffer_->isText            = 1.0f;
+		buffer_++;
+
+		// We use 6 indices to draw a quad
+		indexCount_ += 6;
+	}
 }
 
 /***********************************************************************************************************************
