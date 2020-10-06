@@ -14,6 +14,19 @@ Paddle::Paddle(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4
 {}
 
 /***********************************************************************************************************************
+ * Constructor.
+ *
+ * @param const glm::vec2 &position   Position (x, y).
+ * @param const glm::vec2 &size       Size (width, height).
+ * @param Texture *texture            Texture of the ball.
+ * @param const glm::vec2 &velocity   Velocity.
+ **********************************************************************************************************************/
+Paddle::Paddle(const glm::vec2 &position, const glm::vec2 &size, Texture *texture, const glm::vec2 &velocity)
+	: Sprite(position.x, position.y, size.x, size.y, texture)
+	, velocity_ {velocity}
+{}
+
+/***********************************************************************************************************************
  * Resets the paddle to the given position with the given velocity.
  *
  * @param const glm::vec2 &position   Position.
@@ -24,5 +37,5 @@ Paddle::Paddle(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4
 void Paddle::reset(const glm::vec2 &position, const glm::vec2 &velocity)
 {
 	this->position = position;
-	velocity_ = velocity;
+	velocity_      = velocity;
 }

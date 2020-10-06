@@ -14,6 +14,19 @@ Ball::Ball(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &co
 {}
 
 /***********************************************************************************************************************
+ * Constructor.
+ *
+ * @param const glm::vec2 &position   Position (x, y).
+ * @param const glm::vec2 &size       Size (width, height).
+ * @param Texture *texture            Texture of the ball.
+ * @param const glm::vec2 &velocity   Velocity.
+ **********************************************************************************************************************/
+Ball::Ball(const glm::vec2 &position, const glm::vec2 &size, Texture *texture, const glm::vec2 &velocity)
+	: Sprite(position.x, position.y, size.x, size.y, texture)
+	, velocity_ {velocity}
+{}
+
+/***********************************************************************************************************************
  * Moves the ball and bounces from the ceiling and floor.
  *
  * @param float deltaTime    Time elapsed between 2 frames.
@@ -56,5 +69,5 @@ glm::vec2 Ball::move(float deltaTime, int windowWidth, int windowHeight)
 void Ball::reset(const glm::vec2 &position, const glm::vec2 &velocity)
 {
 	this->position = position;
-	velocity_ = velocity;
+	velocity_      = velocity;
 }
