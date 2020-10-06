@@ -23,5 +23,4 @@ public:
 private:
 	std::vector<Renderable *> renderables_;   // Vector for all the renderables on the layer
 	Renderer *renderer_;                      // Renderer object
-	Shader *shader_;                          // Shader object
 };

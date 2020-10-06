@@ -1,4 +1,6 @@
 #include "Layer.h"
+#include "ResourceManager.h"
+#include <iostream>
 
 /***********************************************************************************************************************
  * Constructor.
@@ -8,12 +10,11 @@
  **********************************************************************************************************************/
 Layer::Layer(int width, int height)
 	: renderer_ {new Renderer()}
-	, shader_ {new Shader("../resources/shaders/sprite-vs.glsl", "../resources/shaders/sprite-fs.glsl")}
 {
 	// Set an orthographic projection
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
-	shader_->use();
-	shader_->setMatrix4("uProjection", projection);
+	ResourceManager::getShader("quad")->use();
+	ResourceManager::getShader("quad")->setMatrix4("uProjection", projection);
 }
 
 /***********************************************************************************************************************
@@ -26,7 +27,6 @@ Layer::~Layer()
 	}
 
 	delete renderer_;
-	delete shader_;
 }
 
 /***********************************************************************************************************************
@@ -48,11 +48,11 @@ void Layer::add(Renderable *renderable)
  **********************************************************************************************************************/
 void Layer::render()
 {
-	shader_->use();
+	ResourceManager::getShader("quad")->use();
 
 	renderer_->begin();
 	for (const Renderable *renderable : renderables_) {
-		renderer_->add(renderable);
+		renderable->submit(renderer_);
 	}
 	renderer_->end();
 
