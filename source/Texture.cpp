@@ -1,30 +1,29 @@
 #include <glad//glad.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-#include <stdexcept>
 #include "Texture.h"
 
 /***********************************************************************************************************************
- * Constructor. Creates a texture from the given image file.
- *
- * @param filepath
+ * Constructor.
  **********************************************************************************************************************/
-Texture::Texture(const std::string &filepath)
+Texture::Texture()
 	: id_ {0}
-	, buffer_ {nullptr}
 	, width_ {0}
 	, height_ {0}
-	, channels_ {0}
 {
 	glGenTextures(1, &id_);
+}
 
-	// Load the image file
-	buffer_ = stbi_load(filepath.c_str(), &width_, &height_, &channels_, 4);
-
-	if (!buffer_) {
-		throw std::runtime_error("Failed to load image");
-	}
-
+/***********************************************************************************************************************
+ * Generates a 2D texture.
+ *
+ * @param unsigned char *data   Image data.
+ * @param unsigned int width    Width of the generated texture.
+ * @param unsigned int height   Height of the generated texture.
+ * @param GLenum format         Format of the pixel data.
+ *
+ * @return void
+ **********************************************************************************************************************/
+void Texture::generate(unsigned char *data, unsigned int width, unsigned int height, GLenum format)
+{
 	bind();
 
 	// Set the texture wrapping/filtering options
@@ -34,10 +33,22 @@ Texture::Texture(const std::string &filepath)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Generate the texture
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer_);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+	width_  = width;
+	height_ = height;
 
 	unbind();
-	stbi_image_free(buffer_);
+}
+
+/***********************************************************************************************************************
+ * Deletes the texture.
+ *
+ * @return void
+ **********************************************************************************************************************/
+void Texture::destroy()
+{
+	glDeleteTextures(1, &id_);
 }
 
 /***********************************************************************************************************************
