@@ -89,7 +89,7 @@ void Font::generateAtlas(const std::string &fontFile, unsigned int fontSize)
 		characters_[c].bitmapTop     = face->glyph->bitmap_top;
 		characters_[c].advanceX      = face->glyph->advance.x >> 6;
 		characters_[c].advanceY      = face->glyph->advance.y >> 6;
-		characters_[c].textureOffset = static_cast<float>(x) / width_;
+		characters_[c].textureOffset = static_cast<float>(x) / static_cast<float>(width_);
 
 		x += face->glyph->bitmap.width;
 	}
