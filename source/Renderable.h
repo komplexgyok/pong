@@ -26,11 +26,15 @@ public:
 	[[nodiscard]] inline const std::vector<glm::vec2> &getTextureCoordinates() const { return textureCoordinates_; }
 	[[nodiscard]] inline const glm::vec4 &getColor() const { return color; }
 	[[nodiscard]] inline const unsigned int getTextureId() const { return texture_ ? texture_->getId() : 0; }
+	[[nodiscard]] inline bool getIsActive() const { return isActive_; }
 
 	// Setters
 	void setPosition(const glm::vec2 &position) { this->position = position; }
 	void setPositionX(float positionX) { position.x = positionX; }
 	void setPositionY(float positionY) { position.y = positionY; }
+	void setColor(const glm::vec4 &color) { this->color = color; }
+	void setColor(float r, float g, float b) { color.r = r; color.g = g; color.b = b; }
+	void setIsActive(bool isActive) { isActive_ = isActive; }
 
 protected:
 	glm::vec2 position;                           // Position (x, y)
@@ -38,4 +42,5 @@ protected:
 	std::vector<glm::vec2> textureCoordinates_;   // Texture coordinates
 	glm::vec4 color;                              // Color (RGBA)
 	Texture *texture_;                            // Texture object
+	bool isActive_;                               // Decides if it should be rendered
 };

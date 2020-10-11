@@ -12,6 +12,7 @@ Renderable::Renderable(const glm::vec2 &position, const glm::vec2 &size, const g
 	, size(size)
 	, color(color)
 	, texture_ {nullptr}
+	, isActive_ {true}
 {
 	// Set default texture coordinates
 	textureCoordinates_.emplace_back(0.0f, 0.0f);
