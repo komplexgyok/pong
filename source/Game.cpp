@@ -22,7 +22,7 @@ Game::Game(const std::string &title, int width, int height)
 	ResourceManager::loadTexture("../resources/textures/ball.png", "ball");
 
 	// Load the font file
-	ResourceManager::loadFont("../resources/fonts/Makisupa.ttf", 100, "makisupa100");
+	ResourceManager::loadFont("../resources/fonts/Makisupa.ttf", 90, "makisupa90");
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
