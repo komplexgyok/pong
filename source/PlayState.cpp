@@ -1,4 +1,5 @@
 #include "PlayState.h"
+#include "ResourceManager.h"
 
 /***********************************************************************************************************************
  * Constructor.
@@ -7,9 +8,6 @@
  **********************************************************************************************************************/
 PlayState::PlayState(Game *game)
 	: game_ {game}
-	, paddle1_ {nullptr}
-	, paddle2_ {nullptr}
-	, ball_ {nullptr}
 {
 	// Set GLFW callback functions
 	glfwSetWindowUserPointer(game_->getWindow()->getNativeWindow(), this);
@@ -18,12 +16,17 @@ PlayState::PlayState(Game *game)
 	glfwSetCursorPosCallback(game_->getWindow()->getNativeWindow(), cursorPositionCallback);
 
 	// Create a 2D layer
-	layer = new Layer(WINDOW_WIDTH, WINDOW_HEIGHT);
+	game_->layer = new Layer(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+	// Init the OpenGL texture slots
+	int textures[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	ResourceManager::getShader("quad")->use();
+	ResourceManager::getShader("quad")->setUniform1iv("uTextures", textures, 10);
 
 	// Init the net
 	float netY = 0.0f;
 	while (netY <= static_cast<float>(WINDOW_HEIGHT)) {
-		layer->add(new Sprite(
+		game_->layer->add(new Sprite(
 			static_cast<float>(WINDOW_WIDTH) / 2.0f - NET_SIZE.x / 2.0f, netY,
 			NET_SIZE.x, NET_SIZE.y,
 			NET_COLOR.r, NET_COLOR.g, NET_COLOR.b, NET_COLOR.a
@@ -32,26 +35,16 @@ PlayState::PlayState(Game *game)
 	}
 
 	// Init the paddles
-	paddle1_ = new Paddle(PADDLE1_POSITION, PADDLE_SIZE, PADDLE_COLOR, PADDLE_VELOCITY);
-	paddle2_ = new Paddle(PADDLE2_POSITION, PADDLE_SIZE, PADDLE_COLOR, PADDLE_VELOCITY);
+	game_->paddle1 = new Paddle(PADDLE1_POSITION, PADDLE_SIZE, ResourceManager::getTexture("paddle"), PADDLE_VELOCITY);
+	game_->paddle2 = new Paddle(PADDLE2_POSITION, PADDLE_SIZE, ResourceManager::getTexture("paddle"), PADDLE_VELOCITY);
 
 	// Init the ball
-	ball_ = new Ball(BALL_POSITION, BALL_SIZE, BALL_COLOR, BALL_VELOCITY);
+	game_->ball = new Ball(BALL_POSITION, BALL_SIZE, ResourceManager::getTexture("ball"), BALL_VELOCITY);
 
 	// Add all sprites to the layer
-	layer->add(paddle1_);
-	layer->add(paddle2_);
-	layer->add(ball_);
-}
-
-/***********************************************************************************************************************
- * Destructor.
- **********************************************************************************************************************/
-PlayState::~PlayState()
-{
-	delete paddle1_;
-	delete paddle2_;
-	delete ball_;
+	game_->layer->add(game_->paddle1);
+	game_->layer->add(game_->paddle2);
+	game_->layer->add(game_->ball);
 }
 
 // Local function declaration
@@ -98,6 +91,8 @@ void PlayState::input(float deltaTime)
 	// Poll for I/O events (keyboard, mouse, etc.)
 	glfwPollEvents();
 
+	Paddle *paddle1 = game_->paddle1;
+
 	// Go back to the main menu
 	if (game_->getKey(GLFW_KEY_ESCAPE)) {
 		game_->pushState(new MenuState(game_));
@@ -105,38 +100,41 @@ void PlayState::input(float deltaTime)
 
 	// Move up
 	if (game_->getKey(GLFW_KEY_W)) {
-		if (paddle1_->getPosition().y >= 0.0f) {
-			paddle1_->setPositionY(paddle1_->getPosition().y - paddle1_->getVelocity().y * deltaTime);
+		if (paddle1->getPosition().y >= 0.0f) {
+			paddle1->setPositionY(paddle1->getPosition().y - paddle1->getVelocity().y * deltaTime);
 		}
 	}
 
 	// Move down
 	if (game_->getKey(GLFW_KEY_S)) {
-		if (paddle1_->getPosition().y <= static_cast<float>(game_->getWindow()->getHeight()) - paddle1_->getSize().y) {
-			paddle1_->setPositionY(paddle1_->getPosition().y + paddle1_->getVelocity().y * deltaTime);
+		if (paddle1->getPosition().y <= static_cast<float>(game_->getWindow()->getHeight()) - paddle1->getSize().y) {
+			paddle1->setPositionY(paddle1->getPosition().y + paddle1->getVelocity().y * deltaTime);
 		}
 	}
 }
 
 void PlayState::update(float deltaTime)
 {
+	Paddle *paddle2 = game_->paddle2;
+	Ball *ball      = game_->ball;
+
 	int windowWidth  = game_->getWindow()->getWidth();
 	int windowHeight = game_->getWindow()->getHeight();
 
 	// Move the ball
-	ball_->move(deltaTime, windowWidth, windowHeight);
+	ball->move(deltaTime, windowWidth, windowHeight);
 
 	// Move AI up
-	if (ball_->getPosition().y < paddle2_->getPosition().y) {
-		if (paddle2_->getPosition().y >= 0.0f) {
-			paddle2_->setPositionY(paddle2_->getPosition().y - paddle2_->getVelocity().y * deltaTime);
+	if (ball->getPosition().y < paddle2->getPosition().y) {
+		if (paddle2->getPosition().y >= 0.0f) {
+			paddle2->setPositionY(paddle2->getPosition().y - paddle2->getVelocity().y * deltaTime);
 		}
 	}
 
 	// Move AI down
-	if (ball_->getPosition().y > paddle2_->getPosition().y) {
-		if (paddle2_->getPosition().y <= static_cast<float>(windowHeight) - paddle2_->getSize().y) {
-			paddle2_->setPositionY(paddle2_->getPosition().y + paddle2_->getVelocity().y * deltaTime);
+	if (ball->getPosition().y > paddle2->getPosition().y) {
+		if (paddle2->getPosition().y <= static_cast<float>(windowHeight) - paddle2->getSize().y) {
+			paddle2->setPositionY(paddle2->getPosition().y + paddle2->getVelocity().y * deltaTime);
 		}
 	}
 
@@ -144,10 +142,10 @@ void PlayState::update(float deltaTime)
 	checkCollisions_();
 
 	// Reset the paddles and the ball if the ball leaves the play area
-	if ((ball_->getPosition().x < 0.0f) || (ball_->getPosition().x + ball_->getSize().x > static_cast<float>(windowWidth))) {
-		paddle1_->reset(PADDLE1_POSITION, PADDLE_VELOCITY);
-		paddle2_->reset(PADDLE2_POSITION, PADDLE_VELOCITY);
-		ball_->reset(BALL_POSITION, BALL_VELOCITY);
+	if ((ball->getPosition().x < 0.0f) || (ball->getPosition().x + ball->getSize().x > static_cast<float>(windowWidth))) {
+		game_->paddle1->reset(PADDLE1_POSITION, PADDLE_VELOCITY);
+		paddle2->reset(PADDLE2_POSITION, PADDLE_VELOCITY);
+		ball->reset(BALL_POSITION, BALL_VELOCITY);
 	}
 }
 
@@ -157,7 +155,8 @@ void PlayState::render()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	layer->render();
+	// Render
+	game_->layer->render();
 
 	// Swap front and back buffers
 	glfwSwapBuffers(game_->getWindow()->getNativeWindow());
@@ -192,43 +191,47 @@ bool detectCollision(Sprite *one, Sprite *two)
  **********************************************************************************************************************/
 void PlayState::checkCollisions_()
 {
+	Paddle *paddle1 = game_->paddle1;
+	Paddle *paddle2 = game_->paddle2;
+	Ball *ball      = game_->ball;
+
 	// Paddle1 - Ball collision check
-	bool isCollision = detectCollision(paddle1_, ball_);
+	bool isCollision = detectCollision(paddle1, ball);
 
 	if (isCollision) {
 		// Check where the ball hit the paddle and change velocity based on the distance
-		float paddleCenter = paddle1_->getPosition().y + paddle1_->getSize().y / 2.0f;
-		float distance = (ball_->getPosition().y + ball_->getSize().y / 2.0f) - paddleCenter;
-		float percentage = distance / (paddle1_->getSize().y / 2.0f);
+		float paddleCenter = paddle1->getPosition().y + paddle1->getSize().y / 2.0f;
+		float distance = (ball->getPosition().y + ball->getSize().y / 2.0f) - paddleCenter;
+		float percentage = distance / (paddle1->getSize().y / 2.0f);
 
 		// Set the new ball velocity
 		float strength = 5.0f;
-		glm::vec2 oldVelocity = ball_->getVelocity();
-		ball_->setVelocityY(100.0f * percentage * strength);
-		ball_->setVelocityX(ball_->getVelocity().x * -1.0f);
-		ball_->setVelocity(glm::normalize(ball_->getVelocity()) * glm::length(oldVelocity));
+		glm::vec2 oldVelocity = ball->getVelocity();
+		ball->setVelocityY(100.0f * percentage * strength);
+		ball->setVelocityX(ball->getVelocity().x * -1.0f);
+		ball->setVelocity(glm::normalize(ball->getVelocity()) * glm::length(oldVelocity));
 
 		// Reposition the ball
-		ball_->setPositionX(paddle1_->getPosition().x + paddle1_->getSize().x + 1.0f);
+		ball->setPositionX(paddle1->getPosition().x + paddle1->getSize().x + 1.0f);
 	}
 
 	// Paddle2 - Ball collision check
-	isCollision = detectCollision(paddle2_, ball_);
+	isCollision = detectCollision(paddle2, ball);
 
 	if (isCollision) {
 		// Check where the ball hit the paddle and change velocity based on the distance
-		float paddleCenter = paddle2_->getPosition().y + paddle2_->getSize().y / 2.0f;
-		float distance = (ball_->getPosition().y + ball_->getSize().y / 2.0f) - paddleCenter;
-		float percentage = distance / (paddle2_->getSize().y / 2.0f);
+		float paddleCenter = paddle2->getPosition().y + paddle2->getSize().y / 2.0f;
+		float distance = (ball->getPosition().y + ball->getSize().y / 2.0f) - paddleCenter;
+		float percentage = distance / (paddle2->getSize().y / 2.0f);
 
 		// Set the new ball velocity
 		float strength = 5.0f;
-		glm::vec2 oldVelocity = ball_->getVelocity();
-		ball_->setVelocityY(100.0f * percentage * strength);
-		ball_->setVelocityX(ball_->getVelocity().x * -1);
-		ball_->setVelocity(glm::normalize(ball_->getVelocity()) * glm::length(oldVelocity));
+		glm::vec2 oldVelocity = ball->getVelocity();
+		ball->setVelocityY(100.0f * percentage * strength);
+		ball->setVelocityX(ball->getVelocity().x * -1);
+		ball->setVelocity(glm::normalize(ball->getVelocity()) * glm::length(oldVelocity));
 
 		// Reposition the ball
-		ball_->setPositionX(paddle2_->getPosition().x - ball_->getSize().x - 1.0f);
+		ball->setPositionX(paddle2->getPosition().x - ball->getSize().x - 1.0f);
 	}
 }
