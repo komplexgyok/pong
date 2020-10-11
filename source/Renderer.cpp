@@ -1,5 +1,4 @@
 #include "Renderer.h"
-#include <iostream>
 
 /***********************************************************************************************************************
  * Constructor. Sets up the renderer for 2D quad rendering.
@@ -208,10 +207,7 @@ void Renderer::addText(const Text *text)
 	const glm::vec4 color                = text->getColor();
 
 	// Fix scale for now
-	float scale = 1.0f;
-
-	float textWidth = 0.0f;
-	float textHeight = 0.0f;
+	float scale = text->getScale();
 
 	// Iterate through all characters
 	for (auto c : text->getText()) {
@@ -228,11 +224,6 @@ void Renderer::addText(const Text *text)
 		// Skip glyphs that have no pixels
 		if (width == 0.0f || height == 0.0f) {
 			continue;
-		}
-
-		textWidth += character.advanceX * scale;
-		if (height > textHeight) {
-			textHeight = height;
 		}
 
 		buffer_->position          = glm::vec2(x1, y1);
