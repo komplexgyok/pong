@@ -26,5 +26,8 @@ public:
 	void render() override;
 
 private:
-	Game *game_;   // Game instance
+	Game *game_;                 // Game instance
+	std::vector<Text*> texts_;   // Vector of intro texts
+	unsigned int phase_;         // Animation helper
+	unsigned int activeMenu_;    // Active menu
 };
