@@ -3,7 +3,14 @@
 #include "Game.h"
 #include "GameState.h"
 
-// The intro state of the game
+const int WINDOW_WIDTH  = 1280;
+const int WINDOW_HEIGHT = 720;
+
+/***********************************************************************************************************************
+ * IntroState class.
+ *
+ * Renders the intro texts.
+ **********************************************************************************************************************/
 class IntroState : public GameState
 {
 public:
@@ -26,5 +33,7 @@ public:
 	void render() override;
 
 private:
-	Game *game_;   // Game instance
+	Game *game_;                 // Game instance
+	std::vector<Text*> texts_;   // Vector of intro texts
+	unsigned int activeText_;    // Animation helper
 };
