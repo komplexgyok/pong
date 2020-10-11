@@ -1,6 +1,5 @@
 #include "Layer.h"
 #include "ResourceManager.h"
-#include <iostream>
 
 /***********************************************************************************************************************
  * Constructor.
@@ -52,7 +51,9 @@ void Layer::render()
 
 	renderer_->begin();
 	for (const Renderable *renderable : renderables_) {
-		renderable->submit(renderer_);
+		if (renderable->getIsActive()) {
+			renderable->submit(renderer_);
+		}
 	}
 	renderer_->end();
 
